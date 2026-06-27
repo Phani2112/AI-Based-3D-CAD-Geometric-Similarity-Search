@@ -34,8 +34,9 @@
 3. **Full training** - Need 20 epochs on all 4,571 models
 
 ## Current Performance Estimate
-With mock embeddings: mAP@10 would be near random (~3-5%)
-With trained model: Target mAP@50 ≥ 89.35%
+With mock embeddings: mAP@10 = 19.44% (random baseline)
+Paper target: mAP@10 ≈ 89% (inferred from mAP@50 ≥ 89.35%)
+Gap: 69.56% - Training required to close
 
 ## Commands to Run Full Training
 ```bash

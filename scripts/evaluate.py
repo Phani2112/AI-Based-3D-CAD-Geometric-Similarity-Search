@@ -34,15 +34,18 @@ def compute_map_by_category(k=10):
     predictor.load()
     
     ap_scores = []
-    test_queries = list(set(list(id_to_uuid.keys())))[:100]  # Test up to 100 queries
+    test_queries = list(set(list(id_to_uuid.keys())))[:100]
     
     for query_id in test_queries:
-        results = predictor.search(query_id, k=k)
+        results = predictor.search(query_id, k=k+1)  # Get k+1 to exclude query
         query_uuid = id_to_uuid.get(query_id)
         query_cat = category_map.get(query_uuid, -1)
         
         if query_cat == -1:
             continue
+        
+        # Remove query itself from results
+        results = [r for r in results if r != query_id][:k]
         
         correct = 0
         precisions = []
@@ -57,9 +60,9 @@ def compute_map_by_category(k=10):
             ap_scores.append(np.mean(precisions) if precisions else 0)
     
     map_score = np.mean(ap_scores) if ap_scores else 0
-    target = 0.8935  # Paper's mAP@50 score scaled for mAP@10
+    target = 0.89  # Paper's mAP@50 score scaled for mAP@10 estimate
     print(f"mAP@{k}: {map_score:.4f}")
-    print(f"Paper target (estimated): {target:.2f}")
+    print(f"Paper target (estimated for mAP@{k}): {target:.2f}")
     print(f"Gap from target: {abs(target - map_score):.4f}")
     return map_score
 
