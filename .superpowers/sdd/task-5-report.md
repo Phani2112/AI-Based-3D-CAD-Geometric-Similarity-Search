@@ -1,0 +1,5 @@
+- STATUS: DONE
+- Commits made: eab1f67
+- Tests: 1/1
+- Concerns: none
+- Summary: Implemented InfoNCELoss class in src/model/contrastive_loss.py following TDD. The loss takes embedding pairs (u, v) where u is original view and v is augmented view. For each anchor u_i, computes cosine similarity with all v_j in batch and applies InfoNCE formula: -log(exp(s(u_i, v_i)/τ) / Σ_j exp(s(u_i, v_j)/τ)) using cross-entropy for numerical stability.
