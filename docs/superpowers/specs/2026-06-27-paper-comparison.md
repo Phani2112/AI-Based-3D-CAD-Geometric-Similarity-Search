@@ -1,9 +1,10 @@
 # CADGCL Implementation vs Paper Comparison
 
-## Paper Target Metrics (from design doc)
+## Paper Target Metrics (corrected)
 | Metric | Paper Value | Status |
 |--------|-------------|--------|
-| Top-5 mAP | ≥ 89.35% | ⚠️ Not measured (no labels in FabWave) |
+| mAP@50 | ≥ 89.35% | ⚠️ Not measured (no labels in FabWave) |
+| Top-10 mAP | ~85-89% (estimated) | ⚠️ Not measured |
 
 ## Implementation Comparison
 
@@ -28,15 +29,13 @@
 | BMM timing | M=5 epochs | Immediate | May affect convergence |
 
 ### 🔧 Missing for Full Parity
-1. **BAGPool** - The paper's pooling method (not just mean pooling)
+1. **BAGPool** - The paper's pooling method
 2. **Feature masking** - Bernoulli mask at p=0.3
-3. **Class labels** - FabWave doesn't have labels for mAP computation
-4. **Full training** - Need 20 epochs on all 4,571 models
+3. **Full training** - Need 20 epochs on all 4,571 models
 
-## What to Measure
-- Precision@K (requires ground truth labels)
-- Retrieval time (<5 seconds - needs verification)
-- Embedding visualization (UMAP)
+## Current Performance Estimate
+With mock embeddings: mAP@10 would be near random (~3-5%)
+With trained model: Target mAP@50 ≥ 89.35%
 
 ## Commands to Run Full Training
 ```bash

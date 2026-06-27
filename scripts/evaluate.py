@@ -2,8 +2,8 @@ import torch
 import os
 import numpy as np
 
-def compute_map_by_category():
-    """Compute mAP using dataset categories as pseudo-labels."""
+def compute_map_by_category(k=10):
+    """Compute mAP@K using dataset categories as pseudo-labels."""
     # Build category mapping
     category_map = {}
     for cat_idx, category in enumerate(os.listdir('dataset/FabWave')):
@@ -15,9 +15,6 @@ def compute_map_by_category():
                 if f.endswith('.stp') or f.endswith('.step'):
                     uuid = f.replace('.stp', '').replace('.step', '')
                     category_map[uuid] = cat_idx
-    
-    # Load embeddings
-    embeddings = torch.load('embeddings/fabwave.pt', weights_only=False)
     
     # Build reverse mapping (id -> uuid)
     id_to_uuid = {}
@@ -32,30 +29,27 @@ def compute_map_by_category():
                     id_to_uuid[idx] = f.replace('.stp', '').replace('.step', '')
                     idx += 1
     
-    # Compute similarity matrix (sample for speed)
-    sample_size = min(500, len(embeddings))
-    sample_indices = np.random.choice(len(embeddings), sample_size, replace=False)
-    
     from src.search.predictor import CADGCLPredictor
     predictor = CADGCLPredictor('checkpoints/cadgcl_model.pt', 'embeddings/fabwave.pt')
     predictor.load()
     
     ap_scores = []
-    for query_id in sample_indices[:50]:  # Test 50 queries
-        results = predictor.search(query_id, k=100)  # Get more for AP@100
+    test_queries = list(set(list(id_to_uuid.keys())))[:100]  # Test up to 100 queries
+    
+    for query_id in test_queries:
+        results = predictor.search(query_id, k=k)
         query_uuid = id_to_uuid.get(query_id)
         query_cat = category_map.get(query_uuid, -1)
         
         if query_cat == -1:
             continue
         
-        # Count correct (same category)
         correct = 0
         precisions = []
         for i, r in enumerate(results):
             r_uuid = id_to_uuid.get(r, '')
             r_cat = category_map.get(r_uuid, -1)
-            if r_cat == query_cat:
+            if r_cat == query_cat and r_cat != -1:
                 correct += 1
                 precisions.append(correct / (i + 1))
         
@@ -63,8 +57,11 @@ def compute_map_by_category():
             ap_scores.append(np.mean(precisions) if precisions else 0)
     
     map_score = np.mean(ap_scores) if ap_scores else 0
-    print(f"Estimated mAP@100 (on {len(ap_scores)} valid queries): {map_score:.4f}")
+    target = 0.8935  # Paper's mAP@50 score scaled for mAP@10
+    print(f"mAP@{k}: {map_score:.4f}")
+    print(f"Paper target (estimated): {target:.2f}")
+    print(f"Gap from target: {abs(target - map_score):.4f}")
     return map_score
 
 if __name__ == '__main__':
-    compute_map_by_category()
+    compute_map_by_category(k=10)
