@@ -4,7 +4,6 @@ import pytorch_lightning as pl
 from src.model.ebc_augmentation import EBCAugmentation
 from src.model.contrastive_loss import InfoNCELoss
 
-
 class CADGCLTrainer(pl.LightningModule):
     def __init__(self, model, lr=0.01):
         super().__init__()
@@ -14,10 +13,10 @@ class CADGCLTrainer(pl.LightningModule):
         self.loss_fn = InfoNCELoss(temperature=0.07)
 
     def training_step(self, batch, batch_idx):
-        x, edge_index, edge_attr = batch['x'], batch['edge_index'], batch['edge_attr']
-        edge_index2, edge_attr2 = self.aug(edge_index, edge_attr)
-        z1 = self.model(x, edge_index, edge_attr)
-        z2 = self.model(x, edge_index2, edge_attr2)
+        batch_tensor = batch.get('batch', None)
+        z1 = self.model(batch.x, batch.edge_index, batch.edge_attr, batch_tensor)
+        edge_index2, edge_attr2 = self.aug(batch.edge_index, batch.edge_attr)
+        z2 = self.model(batch.x, edge_index2, edge_attr2, batch_tensor)
         loss = self.loss_fn(z1, z2)
         return loss
 
