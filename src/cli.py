@@ -4,6 +4,10 @@ except ImportError:
     typer = None
 import torch
 import os
+import sys
+
+# Add current directory to path for imports
+sys.path.insert(0, os.getcwd())
 
 def search(query: int = typer.Option(..., help="Query model ID"), 
            k: int = typer.Option(5, help="Number of results")):
@@ -29,7 +33,6 @@ def train(epochs: int = typer.Option(1, help="Training epochs"),
           quick: bool = typer.Option(False, help="Quick demo with synthetic data"),
           batch_size: int = typer.Option(128, help="Batch size")):
     """Train a CADGCL model."""
-    import sys
     import subprocess
     cmd = [sys.executable, "scripts/train.py", "--epochs", str(epochs), "--batch-size", str(batch_size)]
     if quick:
@@ -82,9 +85,7 @@ def ui():
 def web():
     """Launch browser-based similarity search UI."""
     import subprocess
-    import sys
-    cmd = [sys.executable, "-m", "streamlit", "run", "src/ui/streamlit_app.py"]
-    subprocess.run(cmd, check=True)
+    subprocess.run([sys.executable, "-m", "streamlit", "run", "src/ui/streamlit_app.py"])
 
 if typer:
     app = typer.Typer()
