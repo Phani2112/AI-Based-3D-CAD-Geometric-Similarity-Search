@@ -13,10 +13,9 @@ class CADGCLTrainer(pl.LightningModule):
         self.loss_fn = InfoNCELoss(temperature=0.07)
 
     def training_step(self, batch, batch_idx):
-        batch_tensor = batch.get('batch', None)
-        z1 = self.model(batch.x, batch.edge_index, batch.edge_attr, batch_tensor)
         edge_index2, edge_attr2 = self.aug(batch.edge_index, batch.edge_attr)
-        z2 = self.model(batch.x, edge_index2, edge_attr2, batch_tensor)
+        z1 = self.model(batch.x, batch.edge_index, batch.edge_attr, batch.batch)
+        z2 = self.model(batch.x, edge_index2, edge_attr2, batch.batch)
         loss = self.loss_fn(z1, z2)
         return loss
 
