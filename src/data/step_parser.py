@@ -1,8 +1,8 @@
-from OCC.Core.STEPControl import STEPControl_Reader
-from OCC.Core.IFSelect import IFSelect_RetDone
-from OCC.Core.TopExp import TopExp_Explorer
-from OCC.Core.TopAbs import TopAbs_FACE
-from OCC.Core.TopoDS import topods
+from OCP.STEPControl import STEPControl_Reader
+from OCP.IFSelect import IFSelect_RetDone
+from OCP.TopExp import TopExp_Explorer
+from OCP.TopAbs import TopAbs_FACE
+from OCP.TopoDS import TopoDS
 
 class STEPParser:
     def parse(self, filepath):
@@ -21,6 +21,6 @@ class ParsedShape:
         self.Faces = []
         exp = TopExp_Explorer(shape, TopAbs_FACE)
         while exp.More():
-            face = topods.Face(exp.Current())
+            face = TopoDS.Face_s(exp.Current())
             self.Faces.append(face)
             exp.Next()
