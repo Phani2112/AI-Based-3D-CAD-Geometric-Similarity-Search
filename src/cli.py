@@ -78,18 +78,19 @@ def ui():
         except (ValueError, EOFError):
             break
 
+def web():
+    """Launch browser-based similarity search UI."""
+    import subprocess
+    import sys
+    cmd = [sys.executable, "-m", "streamlit", "run", "src/ui/streamlit_app.py"]
+    subprocess.run(cmd, check=True)
+
 if typer:
     app = typer.Typer()
     app.command()(search)
     app.command()(train)
     app.command()(ui)
+    app.command()(web)
     
     if __name__ == '__main__':
         app()
-else:
-    def search_fallback(query, k=5):
-        search_cmd = lambda query=query, k=k: None
-        search_cmd(query, k)
-    
-    def train_fallback(epochs=1, quick=False):
-        pass

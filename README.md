@@ -9,19 +9,19 @@ B-rep attributed graph contrastive learning for CAD model retrieval.
 pip install -r requirements.txt
 ```
 
-### Run Similarity Search UI
+### Launch Browser-based Similarity Search
 ```bash
-python -m src.cli ui
+python -m src.cli web
 ```
 
-### Search via CLI
+### Run CLI Search
 ```bash
 python -m src.cli search --query 0 --k 5
 ```
 
-### Train on New Dataset
+### Train on New Dataset (demo)
 ```bash
-python -m src.cli train --dataset /path/to/step/files --epochs 20 --quick
+python -m src.cli train --quick --epochs 20
 ```
 
 ## Architecture
@@ -38,11 +38,18 @@ python -m src.cli train --dataset /path/to/step/files --epochs 20 --quick
 - `src/model/bmm_sampler.py` - Beta Mixture Model sampler
 - `src/model/ebc_augmentation.py` - Edge betweenness centrality augmentation
 - `src/search/predictor.py` - Inference pipeline
+- `src/search/faiss_index.py` - FAISS similarity search
 - `src/cli.py` - CLI entry point
+- `src/ui/streamlit_app.py` - Browser-based UI
 
 ## Usage
 
-### Launch Interactive UI
+### Launch Browser-based UI
+```bash
+python -m src.cli web
+```
+
+### Launch Terminal UI
 ```bash
 python -m src.cli ui
 ```
