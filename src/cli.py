@@ -14,7 +14,7 @@ def search(query: int = typer.Option(..., help="Query model ID"),
     embeddings_path = "embeddings/fabwave.pt"
     
     if not os.path.exists(model_path):
-        print(f"Error: Model not found. Run 'python -m src.cli train --quick' first.")
+        print(f"Error: Model not found. Run 'python3 -m src.cli train --quick' first.")
         return
     if not os.path.exists(embeddings_path):
         print(f"Error: Embeddings not found.")
@@ -26,11 +26,12 @@ def search(query: int = typer.Option(..., help="Query model ID"),
     print(f"Top-{k} similar models for query {query}: {results}")
 
 def train(epochs: int = typer.Option(1, help="Training epochs"), 
-          quick: bool = typer.Option(False, help="Quick demo with synthetic data")):
+          quick: bool = typer.Option(False, help="Quick demo with synthetic data"),
+          batch_size: int = typer.Option(128, help="Batch size")):
     """Train a CADGCL model."""
     import sys
     import subprocess
-    cmd = [sys.executable, "scripts/train.py", "--epochs", str(epochs)]
+    cmd = [sys.executable, "scripts/train.py", "--epochs", str(epochs), "--batch-size", str(batch_size)]
     if quick:
         cmd.append("--quick")
     subprocess.run(cmd, check=True)
@@ -50,7 +51,7 @@ def ui():
     embeddings_path = "embeddings/fabwave.pt"
     
     if not os.path.exists(model_path) or not os.path.exists(embeddings_path):
-        print("Error: Missing model or embeddings. Run 'python -m src.cli train --quick' first.")
+        print("Error: Missing model or embeddings. Run 'python3 -m src.cli train --quick' first.")
         return
     
     from src.search.predictor import CADGCLPredictor
