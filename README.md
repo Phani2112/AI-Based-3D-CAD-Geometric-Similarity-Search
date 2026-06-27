@@ -9,17 +9,19 @@ B-rep attributed graph contrastive learning for CAD model retrieval.
 pip install -r requirements.txt
 ```
 
-### Search for Similar Models
+### Run Similarity Search UI
 ```bash
-# Load pre-trained model and embeddings
+python -m src.cli ui
+```
+
+### Search via CLI
+```bash
 python -m src.cli search --query 0 --k 5
 ```
 
 ### Train on New Dataset
 ```bash
-# Generate embeddings after training
-python -m src.cli train --dataset /path/to/step/files --epochs 20
-python scripts/generate_embeddings.py --dataset /path/to/step/files
+python -m src.cli train --dataset /path/to/step/files --epochs 20 --quick
 ```
 
 ## Architecture
@@ -40,17 +42,22 @@ python scripts/generate_embeddings.py --dataset /path/to/step/files
 
 ## Usage
 
-### Training
+### Launch Interactive UI
 ```bash
-python scripts/train.py --dataset dataset/FabWave --epochs 20 --output checkpoints/model.pt
+python -m src.cli ui
+```
+
+### Training (full)
+```bash
+python scripts/train.py --dataset dataset/FabWave --epochs 20
+```
+
+### Training (quick demo)
+```bash
+python scripts/train.py --quick --output checkpoints/cadgcl_model.pt
 ```
 
 ### Generate Embeddings
 ```bash
-python scripts/generate_embeddings.py --model checkpoints/model.pt
-```
-
-### Similarity Search
-```bash
-python -c "from src.cli import search; search(query=0, k=5)"
+python scripts/generate_embeddings.py --model checkpoints/cadgcl_model.pt
 ```
