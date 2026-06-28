@@ -86,9 +86,10 @@ class PresentationDeckTests(unittest.TestCase):
         expected_titles = [
             "Cover",
             "Agenda",
+            "The Business Cost Of Not Finding Parts",
             "What Similarity Means At Gühring",
+            "Discovery Process",
             "Project Goals",
-            "Initial Queries",
             "Selected Model: CADGCL",
             "FabWave Result: mAP@10 Compared With The Paper",
             "Prototype Setup For Live Demo",
@@ -120,6 +121,10 @@ class PresentationDeckTests(unittest.TestCase):
         ]
         for placeholder_id in placeholder_ids:
             self.assertIn(f'data-placeholder-id="{placeholder_id}"', text)
+        placeholder_tags = re.findall(r"<[^>]*data-placeholder-id=\"[^\"]+\"[^>]*>", text)
+        self.assertTrue(placeholder_tags, "Expected placeholder markers in deck markup")
+        for tag in placeholder_tags:
+            self.assertNotRegex(tag, r"\shidden(?:\s|=|>)")
         forbidden_claims = [
             "CADGCL outperformed Similia",
             "CADGCL is better than Similia",
