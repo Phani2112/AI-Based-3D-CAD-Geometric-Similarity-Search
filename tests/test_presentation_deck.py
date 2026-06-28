@@ -223,6 +223,30 @@ class PresentationDeckTests(unittest.TestCase):
         titles_by_slide = {slide.get("data-slide"): slide.get("data-title") for slide in parser.slides}
         self.assertEqual(titles_by_slide["17"], "Model Selection Criteria")
 
+    def test_cadgcl_architecture_slides_cover_training_pipeline_and_reproduction_gaps(self):
+        text = " ".join(parse_deck().text_parts)
+        required_phrases = [
+            "state-of-the-art research territory",
+            "VGNet",
+            "Data transformation and augmentation",
+            "Beta Mixture Model",
+            "Faces/surfaces become nodes",
+            "Node matrix X",
+            "edge_index",
+            "edge_attr",
+            "G_original",
+            "z_original",
+            "G_augmented",
+            "z_augmented",
+            "false negative",
+            "post-training embeddings become the searchable database",
+            "Epochs: 20",
+            "Batch size: 128",
+            "mAP@10",
+        ]
+        for phrase in required_phrases:
+            self.assertIn(phrase, text)
+
 
 if __name__ == "__main__":
     unittest.main()

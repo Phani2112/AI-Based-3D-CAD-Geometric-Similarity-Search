@@ -278,3 +278,53 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+.architecture-band,
+.pipeline-row,
+.tensor-grid,
+.hyperparameter-grid,
+.gap-table {
+  display: grid;
+  gap: 18px;
+}
+
+.architecture-band {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pipeline-row {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.pipeline-step,
+.tensor-box,
+.hyperparameter,
+.gap-table-row {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  background: #F7F7F7;
+}
+
+.tensor-box code,
+.pipeline-step code {
+  color: var(--guhring-red);
+  font-weight: 700;
+}
+
+.hyperparameter-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.hyperparameter strong {
+  display: block;
+  color: var(--guhring-red);
+  font-size: 30px;
+}
+
+.gap-table-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 16px;
+}
