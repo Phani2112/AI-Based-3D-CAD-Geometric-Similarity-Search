@@ -91,7 +91,7 @@ class PresentationDeckTests(unittest.TestCase):
             "Discovery Process",
             "Project Goals",
             "Selected Model: CADGCL",
-            "FabWave Result: mAP@10 Compared With The Paper",
+            "Model Selection Criteria",
             "Prototype Setup For Live Demo",
             "Open Decision: How Should We Compare?",
             "From Prototype To Industrial Validation",
@@ -118,6 +118,14 @@ class PresentationDeckTests(unittest.TestCase):
         css = CSS.read_text(encoding="utf-8")
         self.assertRegex(css, r"@media\s*\([^)]*max-width\s*:\s*[^)]*\)")
         for class_name in ["hero-grid", "two-column", "flow-row", "similarity-ladder"]:
+            self.assertRegex(
+                css,
+                rf"@media[\s\S]*\.{class_name}[\s\S]*grid-template-columns\s*:\s*1fr",
+            )
+
+    def test_research_layouts_collapse_on_narrow_screens(self):
+        css = CSS.read_text(encoding="utf-8")
+        for class_name in ["comparison-grid", "criteria-grid"]:
             self.assertRegex(
                 css,
                 rf"@media[\s\S]*\.{class_name}[\s\S]*grid-template-columns\s*:\s*1fr",
@@ -198,6 +206,22 @@ class PresentationDeckTests(unittest.TestCase):
         ]
         for phrase in required_phrases:
             self.assertIn(phrase, text)
+
+    def test_seven_starting_papers_placeholder_is_table_structured(self):
+        html = DECK.read_text(encoding="utf-8")
+        slide_10 = re.search(
+            r'<section class="slide" data-slide="10"[\s\S]*?</section>',
+            html,
+        ).group(0)
+        self.assertIn('data-placeholder-id="PLACEHOLDER_SEVEN_STARTING_PAPERS"', slide_10)
+        self.assertRegex(slide_10, r'<(?:table|div)[^>]*data-placeholder-id="PLACEHOLDER_SEVEN_STARTING_PAPERS"')
+        for header in ["Paper", "Year", "Representation", "Relevance to Gühring"]:
+            self.assertRegex(slide_10, rf"<th[^>]*>{header}</th>")
+
+    def test_research_slide_titles_match_visible_content(self):
+        parser = parse_deck()
+        titles_by_slide = {slide.get("data-slide"): slide.get("data-title") for slide in parser.slides}
+        self.assertEqual(titles_by_slide["17"], "Model Selection Criteria")
 
 
 if __name__ == "__main__":
