@@ -133,6 +133,22 @@ class PresentationDeckTests(unittest.TestCase):
         matches = re.findall(r'class="slide-number">(\d+)/49</span>', html)
         self.assertEqual(matches, [str(i) for i in range(1, 50)])
 
+    def test_introduction_slides_contain_company_problem_and_similarity_definition(self):
+        text = " ".join(parse_deck().text_parts)
+        required_phrases = [
+            "AI-Based Geometric Similarity Search for 3D CAD Models",
+            "670,000+ CAD models",
+            "Similia results are not accurate enough",
+            "design from scratch",
+            "Full Similarity",
+            "Functional Similarity",
+            "Contour Similarity",
+            "size-invariant",
+            "Can current AI research provide a viable solution",
+        ]
+        for phrase in required_phrases:
+            self.assertIn(phrase, text)
+
 
 if __name__ == "__main__":
     unittest.main()

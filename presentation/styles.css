@@ -126,3 +126,65 @@ button {
   .deck-header, .deck-controls { display: none; }
   .slide { display: block; min-height: 100vh; page-break-after: always; }
 }
+
+.hero-grid,
+.two-column {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.hero-panel,
+.metric-card,
+.goal-panel,
+.decision-card {
+  border-left: 6px solid var(--guhring-red);
+  border-radius: var(--radius-md);
+  padding: 28px;
+  background: #F7F7F7;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.agenda-list,
+.impact-list,
+.finding-list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.agenda-list li,
+.impact-list li,
+.finding-list li {
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+}
+
+.flow-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.flow-arrow {
+  color: var(--guhring-red);
+  font-size: 44px;
+  font-weight: 700;
+}
+
+.similarity-ladder {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.similarity-card {
+  border-top: 8px solid var(--guhring-red);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  background: #F7F7F7;
+}
