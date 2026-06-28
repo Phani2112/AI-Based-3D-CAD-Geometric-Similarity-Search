@@ -1,0 +1,128 @@
+:root {
+  --guhring-red: #CF2E2E;
+  --guhring-black: #1A1A1A;
+  --surface: #FFFFFF;
+  --text: #1A1A1A;
+  --muted: #666666;
+  --line: #E6E6E6;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #F4F4F4;
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.deck-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.deck-header,
+.deck-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 24px;
+  background: var(--guhring-black);
+  color: white;
+}
+
+.brand-lockup,
+.confidential {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.brand-mark {
+  display: inline-block;
+  width: 28px;
+  height: 4px;
+  margin-right: 10px;
+  background: var(--guhring-red);
+  vertical-align: middle;
+}
+
+.progress-track {
+  width: 220px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--guhring-red);
+}
+
+.deck {
+  position: relative;
+  overflow: hidden;
+}
+
+.slide {
+  display: none;
+  min-height: calc(100vh - 104px);
+  padding: 64px;
+  background: var(--surface);
+}
+
+.slide.active { display: block; }
+
+.slide-kicker {
+  color: var(--guhring-red);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+h1, h2 {
+  margin: 12px 0 24px;
+  color: var(--guhring-black);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+h1 { font-size: clamp(42px, 6vw, 76px); }
+h2 { font-size: clamp(34px, 4vw, 54px); }
+
+p, li {
+  font-size: clamp(18px, 2vw, 28px);
+  line-height: 1.35;
+}
+
+.slide-number {
+  position: absolute;
+  right: 32px;
+  bottom: 28px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+button {
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  background: var(--guhring-red);
+  color: white;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@media print {
+  .deck-header, .deck-controls { display: none; }
+  .slide { display: block; min-height: 100vh; page-break-after: always; }
+}
