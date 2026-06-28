@@ -328,3 +328,13 @@ button {
   grid-template-columns: 1fr 1fr 1.2fr;
   gap: 16px;
 }
+
+@media (max-width: 760px) {
+  .architecture-band,
+  .pipeline-row,
+  .tensor-grid,
+  .hyperparameter-grid,
+  .gap-table-row {
+    grid-template-columns: 1fr;
+  }
+}

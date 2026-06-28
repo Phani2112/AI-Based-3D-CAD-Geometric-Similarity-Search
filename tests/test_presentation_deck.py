@@ -41,10 +41,45 @@ class DeckParser(HTMLParser):
                 self.text_parts.append(stripped)
 
 
+class PendingMarkerParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.unnamed_pending_markers = []
+        self._placeholder_depth = 0
+
+    def handle_starttag(self, tag, attrs):
+        attrs_dict = dict(attrs)
+        if self._placeholder_depth or "data-placeholder-id" in attrs_dict:
+            self._placeholder_depth += 1
+
+    def handle_endtag(self, tag):
+        if self._placeholder_depth:
+            self._placeholder_depth -= 1
+
+    def handle_data(self, data):
+        if "Pending" in data and not self._placeholder_depth:
+            self.unnamed_pending_markers.append(" ".join(data.split()))
+
+
 def parse_deck():
     parser = DeckParser()
     parser.feed(DECK.read_text(encoding="utf-8"))
     return parser
+
+
+def media_blocks(css):
+    blocks = []
+    for match in re.finditer(r"@media\s*\([^)]*max-width[^)]*\)\s*{", css):
+        depth = 1
+        index = match.end()
+        while index < len(css) and depth:
+            if css[index] == "{":
+                depth += 1
+            elif css[index] == "}":
+                depth -= 1
+            index += 1
+        blocks.append(css[match.start():index])
+    return blocks
 
 
 class PresentationDeckTests(unittest.TestCase):
@@ -164,6 +199,23 @@ class PresentationDeckTests(unittest.TestCase):
         ]
         for claim in forbidden_claims:
             self.assertNotIn(claim, text)
+
+    def test_pending_markers_are_named_placeholders(self):
+        parser = PendingMarkerParser()
+        parser.feed(DECK.read_text(encoding="utf-8"))
+        self.assertEqual(parser.unnamed_pending_markers, [])
+
+    def test_cadgcl_architecture_layouts_collapse_on_narrow_screens(self):
+        css = CSS.read_text(encoding="utf-8")
+        mobile_blocks = media_blocks(css)
+        for class_name in ["architecture-band", "pipeline-row", "tensor-grid", "hyperparameter-grid", "gap-table-row"]:
+            self.assertTrue(
+                any(
+                    re.search(rf"\.{class_name}[\s\S]*?grid-template-columns\s*:\s*1fr", block)
+                    for block in mobile_blocks
+                ),
+                f"Expected .{class_name} to collapse inside a max-width media query",
+            )
 
     def test_slide_numbers_are_visible_in_markup(self):
         html = DECK.read_text(encoding="utf-8")
