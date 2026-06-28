@@ -178,6 +178,27 @@ class PresentationDeckTests(unittest.TestCase):
         for phrase in required_phrases:
             self.assertIn(phrase, text)
 
+    def test_research_slides_contain_real_queries_and_model_selection_criteria(self):
+        text = " ".join(parse_deck().text_parts)
+        required_phrases = [
+            "2020 onward",
+            "AI CAD similarity search",
+            "CAD geometric similarity search",
+            "ML geometric similarity search",
+            "Research Rabbit",
+            "Final bibliography",
+            "From Voxels To B-rep",
+            "UV-Net",
+            "B-rep support",
+            "Unsupervised capability",
+            "Direct measured superiority over other models",
+            "Number of benchmark comparison",
+            "BRepMAE",
+            "CADGCL",
+        ]
+        for phrase in required_phrases:
+            self.assertIn(phrase, text)
+
 
 if __name__ == "__main__":
     unittest.main()
