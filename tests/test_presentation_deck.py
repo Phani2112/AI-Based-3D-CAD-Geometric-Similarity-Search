@@ -299,6 +299,22 @@ class PresentationDeckTests(unittest.TestCase):
         for phrase in required_phrases:
             self.assertIn(phrase, text)
 
+    def test_tensor_walkthrough_slides_visualize_graph_tensor_vector_operations(self):
+        text = " ".join(parse_deck().text_parts)
+        required_phrases = [
+            "Cylinder STEP/B-rep",
+            "X: [num_faces x 16]",
+            "edge_index: [2 x num_edges]",
+            "edge_attr: [num_edges x 11]",
+            "X0 -> X1 -> X2",
+            "[num_faces x hidden_dim] -> [1 x 256]",
+            "query vector",
+            "nearest neighbors",
+            "live demo",
+        ]
+        for phrase in required_phrases:
+            self.assertIn(phrase, text)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -338,3 +338,54 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+.matrix-visual {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 18px;
+  border-radius: var(--radius-md);
+  background: var(--guhring-black);
+}
+
+.matrix-cell {
+  min-height: 32px;
+  border-radius: var(--radius-sm);
+  background: white;
+}
+
+.matrix-cell.accent {
+  background: var(--guhring-red);
+}
+
+.vector-strip {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.vector-cell {
+  width: 18px;
+  height: 72px;
+  border-radius: var(--radius-sm);
+  background: var(--guhring-red);
+}
+
+.embedding-space {
+  position: relative;
+  min-height: 320px;
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, #FFFFFF 0%, #F2F2F2 100%);
+}
+
+.point {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--guhring-red);
+}
+
+.point.secondary {
+  background: var(--guhring-black);
+}
