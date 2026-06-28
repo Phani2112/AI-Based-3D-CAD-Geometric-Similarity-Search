@@ -99,6 +99,30 @@ class PresentationDeckTests(unittest.TestCase):
         for title in expected_titles:
             self.assertIn(title, titles)
 
+    def test_introduction_slide_titles_match_visible_content(self):
+        parser = parse_deck()
+        titles_by_slide = {slide.get("data-slide"): slide.get("data-title") for slide in parser.slides}
+        expected_titles = {
+            "1": "Cover",
+            "2": "Agenda",
+            "3": "Why This Project Exists",
+            "4": "The Business Cost Of Not Finding Parts",
+            "5": "What Similarity Means At Gühring",
+            "6": "Discovery Process",
+            "7": "Project Goals",
+        }
+        self.assertEqual({slide: titles_by_slide[slide] for slide in expected_titles}, expected_titles)
+        self.assertEqual(len(titles_by_slide.values()), len(set(titles_by_slide.values())))
+
+    def test_intro_layouts_collapse_on_narrow_screens(self):
+        css = CSS.read_text(encoding="utf-8")
+        self.assertRegex(css, r"@media\s*\([^)]*max-width\s*:\s*[^)]*\)")
+        for class_name in ["hero-grid", "two-column", "flow-row", "similarity-ladder"]:
+            self.assertRegex(
+                css,
+                rf"@media[\s\S]*\.{class_name}[\s\S]*grid-template-columns\s*:\s*1fr",
+            )
+
     def test_pending_items_are_marked_without_fabricating_results(self):
         text = DECK.read_text(encoding="utf-8")
         self.assertIn("Pending", text)

@@ -188,3 +188,12 @@ button {
   padding: 24px;
   background: #F7F7F7;
 }
+
+@media (max-width: 760px) {
+  .hero-grid,
+  .two-column,
+  .flow-row,
+  .similarity-ladder {
+    grid-template-columns: 1fr;
+  }
+}
