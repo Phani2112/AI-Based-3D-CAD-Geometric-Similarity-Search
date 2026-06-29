@@ -101,6 +101,14 @@ def media_blocks(css):
     return blocks
 
 
+def slide_html(slide_number):
+    html = DECK.read_text(encoding="utf-8")
+    return re.search(
+        rf'<section class="slide" data-slide="{slide_number}"[\s\S]*?</section>',
+        html,
+    ).group(0)
+
+
 class PresentationDeckTests(unittest.TestCase):
     def test_deck_assets_exist_and_are_linked(self):
         self.assertTrue(DECK.exists(), "HTML deck should exist")
@@ -349,6 +357,61 @@ class PresentationDeckTests(unittest.TestCase):
         ]
         for phrase in required_phrases:
             self.assertIn(phrase, text)
+
+    def test_training_hyperparameters_include_full_configuration(self):
+        slide_31 = slide_html("31")
+        required_phrases = [
+            "Epochs: 20",
+            "Batch size: 128",
+            "Embedding: 256",
+            "Optimizer: Adam",
+            "Learning rate: 0.01",
+            "Temperature: 0.07",
+            "Feature mask rate: 0.3",
+            "Edge perturbation rate: 0.1",
+        ]
+        for phrase in required_phrases:
+            self.assertIn(phrase, slide_31)
+
+    def test_missing_paper_details_cover_required_reconstruction_rows(self):
+        slide_32 = slide_html("32")
+        required_rows = [
+            (
+                "B-rep-to-graph construction logic",
+                "required to create model input",
+                "inferred from VGNet and STEP/B-rep structure",
+            ),
+            (
+                "GNN architecture details",
+                "required to implement encoder",
+                "used BAGConv/VGNet lineage where CADGCL was vague",
+            ),
+            (
+                "Exact feature definitions",
+                "required fixed dimensions",
+                "surface/curve schema defined from CADGCL, VGNet, and STEP observations",
+            ),
+            (
+                "Training/inference engineering",
+                "required working prototype",
+                "implemented local pipeline, embeddings, vector retrieval, and UI",
+            ),
+        ]
+        for row in required_rows:
+            for phrase in row:
+                self.assertIn(phrase, slide_32)
+        for unrelated_placeholder in [
+            "Internal reproduction inputs",
+            "Validation comparison inputs",
+            "Search folders, STEP files, and images",
+            "Similia score rows and result distributions",
+        ]:
+            self.assertNotIn(unrelated_placeholder, slide_32)
+
+    def test_agenda_avoids_conclusions_and_next_steps_label(self):
+        slide_2 = slide_html("2")
+        self.assertNotIn("Conclusions and Next Steps", slide_2)
+        self.assertNotIn("next steps", slide_2.lower())
 
     def test_tensor_walkthrough_slides_visualize_graph_tensor_vector_operations(self):
         text = " ".join(parse_deck().text_parts)
