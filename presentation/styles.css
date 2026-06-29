@@ -438,7 +438,23 @@ button {
 @media (max-width: 900px) {
   .deck-header,
   .deck-controls {
+    flex-wrap: wrap;
     padding: 10px 14px;
+  }
+
+  .deck-controls {
+    justify-content: center;
+  }
+
+  .deck-controls button {
+    flex: 1 1 120px;
+    max-width: 180px;
+  }
+
+  .brand-lockup,
+  .confidential {
+    min-width: 0;
+    overflow-wrap: anywhere;
   }
 
   .progress-track {
@@ -466,6 +482,19 @@ button {
   .gap-table-row,
   .dataset-table-row {
     grid-template-columns: 1fr;
+  }
+
+  .pending-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pending-table th,
+  .pending-table td {
+    min-width: 130px;
+    padding: 12px;
+    font-size: 14px;
   }
 
   p, li {

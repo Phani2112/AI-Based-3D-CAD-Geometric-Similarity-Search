@@ -345,6 +345,34 @@ class PresentationDeckTests(unittest.TestCase):
         self.assertIn("aria-hidden", js)
         self.assertIn("replaceState", js)
 
+    def test_mobile_css_prevents_header_and_pending_table_overflow(self):
+        css = CSS.read_text(encoding="utf-8")
+        mobile_blocks = media_blocks(css)
+        self.assertTrue(
+            any(
+                re.search(r"\.deck-header[\s\S]*?flex-wrap\s*:\s*wrap", block)
+                and re.search(r"\.deck-controls[\s\S]*?flex-wrap\s*:\s*wrap", block)
+                for block in mobile_blocks
+            ),
+            "Expected deck header and controls to wrap inside a max-width media query",
+        )
+        self.assertTrue(
+            any(
+                re.search(r"\.brand-lockup[\s\S]*?overflow-wrap\s*:\s*anywhere", block)
+                and re.search(r"\.confidential[\s\S]*?overflow-wrap\s*:\s*anywhere", block)
+                for block in mobile_blocks
+            ),
+            "Expected long header labels to break safely inside a max-width media query",
+        )
+        self.assertTrue(
+            any(
+                re.search(r"\.pending-table[\s\S]*?display\s*:\s*block", block)
+                and re.search(r"\.pending-table[\s\S]*?overflow-x\s*:\s*auto", block)
+                for block in mobile_blocks
+            ),
+            "Expected pending tables to scroll horizontally inside a max-width media query",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
