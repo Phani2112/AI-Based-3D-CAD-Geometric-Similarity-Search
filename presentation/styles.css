@@ -434,3 +434,41 @@ button {
   color: var(--guhring-black);
   font-weight: 700;
 }
+
+@media (max-width: 900px) {
+  .deck-header,
+  .deck-controls {
+    padding: 10px 14px;
+  }
+
+  .progress-track {
+    display: none;
+  }
+
+  .slide {
+    min-height: calc(100vh - 96px);
+    padding: 32px 22px 64px;
+  }
+
+  .hero-grid,
+  .two-column,
+  .similarity-ladder,
+  .comparison-grid,
+  .criteria-grid,
+  .architecture-band,
+  .pipeline-row,
+  .hyperparameter-grid,
+  .stats-grid,
+  .decision-options {
+    grid-template-columns: 1fr;
+  }
+
+  .gap-table-row,
+  .dataset-table-row {
+    grid-template-columns: 1fr;
+  }
+
+  p, li {
+    font-size: 18px;
+  }
+}

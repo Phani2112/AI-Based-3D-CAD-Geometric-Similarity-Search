@@ -334,6 +334,17 @@ class PresentationDeckTests(unittest.TestCase):
         for phrase in required_phrases:
             self.assertIn(phrase, text)
 
+    def test_deck_has_accessibility_and_responsive_features(self):
+        html = DECK.read_text(encoding="utf-8")
+        css = CSS.read_text(encoding="utf-8")
+        js = JS.read_text(encoding="utf-8")
+        self.assertIn('aria-label="Presentation controls"', html)
+        self.assertIn('aria-label="Slide navigation"', html)
+        self.assertIn('@media print', css)
+        self.assertIn('@media (max-width: 900px)', css)
+        self.assertIn("aria-hidden", js)
+        self.assertIn("replaceState", js)
+
 
 if __name__ == "__main__":
     unittest.main()
