@@ -373,6 +373,18 @@ class PresentationDeckTests(unittest.TestCase):
             "Expected pending tables to scroll horizontally inside a max-width media query",
         )
 
+    def test_presentation_readme_explains_how_to_open_and_update_pending_items(self):
+        readme = ROOT / "presentation" / "README.md"
+        self.assertTrue(readme.exists())
+        text = readme.read_text(encoding="utf-8")
+        self.assertIn("cadgcl-final-presentation.html", text)
+        self.assertIn("python3 -m http.server 8000 --directory presentation", text)
+        self.assertIn("Pending content", text)
+        self.assertIn("Placeholder IDs", text)
+        self.assertIn("PLACEHOLDER_SEVEN_STARTING_PAPERS", text)
+        self.assertIn("PLACEHOLDER_SIMILIA_COMPARISON_METHOD", text)
+        self.assertIn("Confidential", text)
+
 
 if __name__ == "__main__":
     unittest.main()
