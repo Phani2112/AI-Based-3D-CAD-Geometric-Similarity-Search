@@ -315,6 +315,25 @@ class PresentationDeckTests(unittest.TestCase):
         for phrase in required_phrases:
             self.assertIn(phrase, text)
 
+    def test_scaling_complexity_slides_stop_before_unapproved_similia_comparison(self):
+        text = " ".join(parse_deck().text_parts)
+        required_phrases = [
+            "Why FabWave Was Not Enough",
+            "mechanically complex",
+            "Datasets We Tried",
+            "Why Public Datasets Failed The Real Test",
+            "Gühring Dataset: Real Industrial Complexity",
+            "Similia search result folders",
+            "Excel files with Similia similarity scores",
+            "Dataset Statistics",
+            "Preparing The CADGCL vs Similia Comparison",
+            "Open Decision: How Should We Compare?",
+            "From Prototype To Industrial Validation",
+            "to be decided",
+        ]
+        for phrase in required_phrases:
+            self.assertIn(phrase, text)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -389,3 +389,48 @@ button {
 .point.secondary {
   background: var(--guhring-black);
 }
+
+.dataset-table,
+.stats-grid,
+.decision-options {
+  display: grid;
+  gap: 16px;
+}
+
+.dataset-table-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1.4fr;
+  gap: 16px;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+}
+
+.stats-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.stat-card {
+  border-radius: var(--radius-md);
+  padding: 20px;
+  background: var(--guhring-black);
+  color: white;
+}
+
+.stat-card strong {
+  display: block;
+  color: var(--guhring-red);
+  font-size: 34px;
+}
+
+.decision-options {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.to-be-decided {
+  border: 2px dashed var(--guhring-red);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  background: #FFF7F7;
+  color: var(--guhring-black);
+  font-weight: 700;
+}
