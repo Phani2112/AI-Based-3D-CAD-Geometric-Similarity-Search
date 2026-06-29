@@ -61,6 +61,25 @@ class PendingMarkerParser(HTMLParser):
             self.unnamed_pending_markers.append(" ".join(data.split()))
 
 
+class PlaceholderSlideParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.placeholder_slides = []
+        self._current_slide = None
+
+    def handle_starttag(self, tag, attrs):
+        attrs_dict = dict(attrs)
+        if tag == "section" and "slide" in attrs_dict.get("class", "").split():
+            self._current_slide = attrs_dict.get("data-slide")
+        placeholder_id = attrs_dict.get("data-placeholder-id")
+        if placeholder_id:
+            self.placeholder_slides.append((placeholder_id, self._current_slide))
+
+    def handle_endtag(self, tag):
+        if tag == "section":
+            self._current_slide = None
+
+
 def parse_deck():
     parser = DeckParser()
     parser.feed(DECK.read_text(encoding="utf-8"))
@@ -199,6 +218,38 @@ class PresentationDeckTests(unittest.TestCase):
         ]
         for claim in forbidden_claims:
             self.assertNotIn(claim, text)
+
+    def test_placeholder_ids_appear_once_on_expected_slides(self):
+        expected_placeholder_slides = {
+            "PLACEHOLDER_SEVEN_STARTING_PAPERS": "10",
+            "PLACEHOLDER_FINAL_BIBLIOGRAPHY_COUNT": "12",
+            "PLACEHOLDER_FIELD_LIMITATION_REFERENCES": "16",
+            "PLACEHOLDER_FABWAVE_MAP10_PAPER": "34",
+            "PLACEHOLDER_FABWAVE_MAP10_REPRODUCTION": "34",
+            "PLACEHOLDER_PUBLIC_DATASETS_TRIED": "42",
+            "PLACEHOLDER_GUHRING_SEARCH_FOLDERS": "46",
+            "PLACEHOLDER_GUHRING_STEP_FILES": "46",
+            "PLACEHOLDER_GUHRING_IMAGES": "46",
+            "PLACEHOLDER_GUHRING_SIMILIA_SCORE_ROWS": "46",
+            "PLACEHOLDER_GUHRING_RESULT_SET_DISTRIBUTION": "46",
+            "PLACEHOLDER_SIMILIA_COMPARISON_PREPARATION": "47",
+            "PLACEHOLDER_SIMILIA_COMPARISON_METHOD": "48",
+            "PLACEHOLDER_INDUSTRIAL_VALIDATION_NEXT_STEP": "49",
+        }
+        parser = PlaceholderSlideParser()
+        parser.feed(DECK.read_text(encoding="utf-8"))
+
+        actual_placeholder_slides = {}
+        for placeholder_id, slide_number in parser.placeholder_slides:
+            actual_placeholder_slides.setdefault(placeholder_id, []).append(slide_number)
+
+        self.assertEqual(set(actual_placeholder_slides), set(expected_placeholder_slides))
+        for placeholder_id, expected_slide in expected_placeholder_slides.items():
+            self.assertEqual(
+                actual_placeholder_slides[placeholder_id],
+                [expected_slide],
+                f"{placeholder_id} should appear exactly once on slide {expected_slide}",
+            )
 
     def test_pending_markers_are_named_placeholders(self):
         parser = PendingMarkerParser()
