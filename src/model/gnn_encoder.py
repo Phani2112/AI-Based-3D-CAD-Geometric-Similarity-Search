@@ -23,9 +23,19 @@ class BAGConv(nn.Module):
 class BAGConvEncoder(nn.Module):
     def __init__(self, in_node_dim=16, in_edge_dim=11, hidden_dim=256):
         super().__init__()
-        self.conv = BAGConv(in_node_dim, in_edge_dim, hidden_dim)
+        self.conv1 = BAGConv(in_node_dim, in_edge_dim, hidden_dim)
+        self.conv2 = BAGConv(hidden_dim, in_edge_dim, hidden_dim)
         self.pool = GlobalMeanPool()
+        self.projection_head = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim),
+        )
 
     def forward(self, x, edge_index, edge_attr, batch):
-        x = self.conv(x, edge_index, edge_attr)
+        x = self.conv1(x, edge_index, edge_attr)
+        x = self.conv2(x, edge_index, edge_attr)
         return self.pool(x, batch)
+
+    def project(self, graph_embeddings):
+        return self.projection_head(graph_embeddings)

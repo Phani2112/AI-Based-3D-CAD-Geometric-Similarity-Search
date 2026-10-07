@@ -25,22 +25,8 @@ python -m src.cli train --quick --epochs 20
 ```
 
 ## Architecture
-- STEP Parser → BRep Graph Builder → BAGConv GNN → Global Mean Pool → InfoNCE Loss
-- Surfaces as nodes (10 types, 3 normal, 3 tangent → 16 dims)
-- Curves as edges (7 types, 3 direction, 1 length → 11 dims)
 
 ## Files
-- `src/data/step_parser.py` - STEP file parsing
-- `src/data/graph_builder.py` - BRep to graph conversion
-- `src/data/dataset_loader.py` - PyTorch Geometric dataset
-- `src/model/gnn_encoder.py` - BAGConv + pooling
-- `src/model/contrastive_loss.py` - InfoNCE loss
-- `src/model/bmm_sampler.py` - Beta Mixture Model sampler
-- `src/model/ebc_augmentation.py` - Edge betweenness centrality augmentation
-- `src/search/predictor.py` - Inference pipeline
-- `src/search/faiss_index.py` - FAISS similarity search
-- `src/cli.py` - CLI entry point
-- `src/ui/streamlit_app.py` - Browser-based UI
 
 ## Usage
 
@@ -76,3 +62,96 @@ python scripts/evaluate.py
 ```bash
 python scripts/generate_embeddings.py --model checkpoints/cadgcl_model.pt
 ```
+ # CADGCL
+
+ CADGCL is a research prototype for similarity search over 3D CAD models. It parses STEP boundary representations into attributed graphs, learns graph embeddings with contrastive learning, and searches the embedding space with FAISS.
+
+ ## Project Status
+
+This repository contains the source code, tests, research documentation, and the approved open-source FabWave dataset. The Gühring dataset and any company-derived files must remain private. Trained weights, embeddings, and processed tensors are generated artifacts and should be published only when their data provenance and redistribution rights are clear.
+
+ ## Setup
+
+ Use Python 3.10 or newer in a virtual environment:
+
+ ```bash
+ python -m venv .venv
+ # Windows PowerShell
+ .\.venv\Scripts\Activate.ps1
+ python -m pip install --upgrade pip
+ python -m pip install -e ".[dev]"
+ ```
+
+ The `OCP`, PyTorch, PyTorch Geometric, FAISS, and Streamlit dependencies can require platform-specific installation choices. If a platform wheel is unavailable, install the compatible PyTorch stack first and then install this project.
+
+ ## Commands
+
+ After installing the package, the CLI is available as `cadgcl` or through `python -m src.cli`.
+
+ ```bash
+ # Run the unit tests
+ python -m pytest
+
+ # Train a small synthetic smoke-test model
+ cadgcl train --quick --epochs 1 --skip-embeddings
+
+ # Train against a dataset folder named under dataset/
+ cadgcl train --dataset FabWave --epochs 20
+
+ # Generate embeddings for a trained dataset model
+ python scripts/generate_embeddings.py --dataset FabWave
+
+ # Evaluate retrieval quality
+ python scripts/evaluate.py --dataset FabWave --k 10
+
+# Launch the browser UI and choose a ready dataset in the app
+cadgcl web
+ ```
+
+ Dataset arguments are folder names, not paths. Dataset-derived outputs are stored together:
+
+ ```text
+ dataset/<name>/
+ ├── processed/graphs.pt
+ ├── processed/metadata.pt
+ ├── checkpoints/cadgcl_model.pt
+ └── embeddings/embeddings.pt
+ ```
+
+ ## Architecture
+
+ ```text
+ STEP file
+	 -> STEP parser
+	 -> B-rep graph builder
+	 -> PyTorch Geometric graph dataset
+	 -> BAGConv encoder and global pooling
+	 -> contrastive training
+	 -> embedding generation
+	 -> FAISS similarity search
+ ```
+
+ Important modules:
+
+ | Area | Module |
+ | --- | --- |
+ | STEP parsing | `src/data/step_parser.py` |
+ | Graph construction | `src/data/graph_builder.py` |
+ | Dataset and artifact paths | `src/data/dataset_loader.py`, `src/data/dataset_registry.py` |
+ | Encoder and loss | `src/model/gnn_encoder.py`, `src/model/contrastive_loss.py` |
+ | Retrieval | `src/search/predictor.py`, `src/search/faiss_index.py` |
+ | CLI and UI | `src/cli.py`, `src/ui/streamlit_app.py` |
+
+ ## Repository Layout
+
+ ```text
+ src/       installable application and ML code
+ tests/     unit and contract tests
+ scripts/   training, embedding, and evaluation workflows
+ docs/      architecture and development notes
+dataset/   approved FabWave data plus private Gühring data and generated artifacts
+ ```
+
+ ## Development Direction
+
+ The next cleanup steps are to consolidate training into one implementation, remove legacy path manipulation from scripts, add a small public STEP fixture for end-to-end testing, and separate approved presentation material from confidential project records. Large datasets and trained artifacts should be distributed separately through approved storage or release assets.

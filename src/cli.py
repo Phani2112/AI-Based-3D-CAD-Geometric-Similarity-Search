@@ -6,16 +6,18 @@ import torch
 import os
 import sys
 
-# Add current directory to path for imports
 sys.path.insert(0, os.getcwd())
 
 def search(query: int = typer.Option(..., help="Query model ID"), 
-           k: int = typer.Option(5, help="Number of results")):
+           k: int = typer.Option(5, help="Number of results"),
+           dataset: str = typer.Option("FabWave", help="Dataset folder name under dataset")):
     """Search for similar CAD models by query ID."""
+    from src.data.dataset_registry import dataset_artifacts
     from src.search.predictor import CADGCLPredictor
     
-    model_path = "checkpoints/cadgcl_model.pt"
-    embeddings_path = "embeddings/fabwave.pt"
+    artifacts = dataset_artifacts(dataset)
+    model_path = artifacts.model_path
+    embeddings_path = artifacts.embeddings_path
     
     if not os.path.exists(model_path):
         print(f"Error: Model not found. Run 'python3 -m src.cli train --quick' first.")
@@ -31,15 +33,32 @@ def search(query: int = typer.Option(..., help="Query model ID"),
 
 def train(epochs: int = typer.Option(1, help="Training epochs"), 
           quick: bool = typer.Option(False, help="Quick demo with synthetic data"),
-          batch_size: int = typer.Option(128, help="Batch size")):
+          batch_size: int = typer.Option(128, help="Batch size"),
+          limit: int = typer.Option(0, help="Limit real dataset training to N models"),
+          skip_embeddings: bool = typer.Option(False, help="Skip embedding generation after training"),
+          dataset: str = typer.Option("FabWave", help="Dataset folder name under dataset")):
     """Train a CADGCL model."""
     import subprocess
-    cmd = [sys.executable, "scripts/train.py", "--epochs", str(epochs), "--batch-size", str(batch_size)]
+
+    cmd = [
+        sys.executable,
+        "scripts/train.py",
+        "--epochs",
+        str(epochs),
+        "--batch-size",
+        str(batch_size),
+        "--limit",
+        str(limit),
+        "--dataset",
+        dataset,
+    ]
     if quick:
         cmd.append("--quick")
-    subprocess.run(cmd, check=True)
+    if skip_embeddings:
+        cmd.append("--skip-embeddings")
+    subprocess.run(cmd, check=True, cwd=os.getcwd())
 
-def ui():
+def ui(dataset: str = typer.Option("FabWave", help="Dataset folder name under dataset")):
     """Launch interactive similarity search UI."""
     try:
         import faiss
@@ -50,8 +69,10 @@ def ui():
         print("Install optional dependencies: pip install faiss-cpu rich")
         return
     
-    model_path = "checkpoints/cadgcl_model.pt"
-    embeddings_path = "embeddings/fabwave.pt"
+    from src.data.dataset_registry import dataset_artifacts
+    artifacts = dataset_artifacts(dataset)
+    model_path = artifacts.model_path
+    embeddings_path = artifacts.embeddings_path
     
     if not os.path.exists(model_path) or not os.path.exists(embeddings_path):
         print("Error: Missing model or embeddings. Run 'python3 -m src.cli train --quick' first.")

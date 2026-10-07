@@ -1,1 +1,47 @@
 .worktrees/
+
+# Python tooling
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+
+# Build and packaging output
+build/
+dist/
+*.egg-info/
+
+# Private company dataset
+dataset/datasetguhring/
+
+# Dataset-derived representations and local caches
+dataset/**/processed/
+dataset/**/embeddings/
+dataset/**/checkpoints/
+
+# Dataset-derived tensors, indexes, embeddings, and checkpoints
+embeddings/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.pkl
+
+# Local experiment output
+*.log
+*.csv
+*.xlsx
+wandb/
+mlruns/
+
+# OS/editor files
+desktop.ini
+.DS_Store
+.vscode/
